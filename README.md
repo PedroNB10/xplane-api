@@ -1,0 +1,1 @@
+Copy the folder XplaneConnect to the X-Plane 11\Resources\plugins folder.
