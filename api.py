@@ -1,7 +1,7 @@
 import time
 from flask import Flask, jsonify
-from waitress import serve
 import xpc
+import threading
 
 APP_PORT = 8080
 
@@ -10,30 +10,23 @@ client = None
 
 # DREFs que serão consultados
 drefs = [
-    "sim/flightmodel/position/latitude",
-    "sim/flightmodel/position/longitude",
-    "sim/cockpit2/gauges/indicators/vvi_fpm_pilot",
-    "sim/flightmodel/position/groundspeed",
-    "sim/flightmodel/position/elevation",
-    "sim/flightmodel2/position/mag_psi",
+    "sim/flightmodel/position/latitude",  # Latitude
+    "sim/flightmodel/position/longitude",  # Longitude
+    "sim/cockpit2/gauges/indicators/vvi_fpm_pilot",  # Vertical Speed
+    "sim/flightmodel/position/groundspeed",  # Speed
+    "sim/flightmodel/position/elevation",  # Altitude
+    "sim/flightmodel2/position/mag_psi",  # Heading
 ]
 
 
 # Função para conectar ao X-Plane e tentar pegar os valores
 def connect_to_xplane():
     global client
+
     while client is None:
         try:
             client = xpc.XPlaneConnect()
             print("Connected to X-Plane, verifying data...")
-
-            # Testa se consegue obter os valores
-            values = client.getDREFs(drefs)
-            if all(v is not None for v in values):
-                print("Successfully retrieved data from X-Plane!")
-                return True
-            else:
-                raise ValueError("Data retrieval failed, retrying...")
 
         except Exception as e:
             print(f"Error: {e}")
@@ -59,22 +52,10 @@ def get_xplane_data():
             }
         except:
             return {
-                "latitude": 0,
-                "longitude": 0,
-                "vertical_speed": 0,
-                "speed": 0,
-                "altitude": 0,
-                "heading": 0,
+                "error": "Failed to retrieve data from X-Plane, please try again later"
             }
-    else:
-        return {
-            "latitude": 0,
-            "longitude": 0,
-            "vertical_speed": 0,
-            "speed": 0,
-            "altitude": 0,
-            "heading": 0,
-        }
+
+    return {"error": "The client is not connected to X-Plane"}
 
 
 app = Flask(__name__)
@@ -88,9 +69,7 @@ def get_api():
 
 
 if __name__ == "__main__":
-    # Conectar ao X-Plane antes de iniciar o servidor
-    if connect_to_xplane():
-        print(f"Server is running on http://localhost:{APP_PORT}")
-        serve(app, host="0.0.0.0", port=APP_PORT)
-    else:
-        print("Could not connect to X-Plane or retrieve data.")
+    thr = threading.Thread(target=connect_to_xplane, args=(), kwargs={})
+    thr.start()
+    print(f"Server is running on http://localhost:{APP_PORT}")
+    app.run(host="0.0.0.0", port=APP_PORT)
