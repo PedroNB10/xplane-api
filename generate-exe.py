@@ -1,23 +1,6 @@
 import subprocess
 
 
-def install_waitress():
-    try:
-        # Command to install waitress
-        command = ["pip", "install", "waitress==3.0.0"]
-
-        # Execute the command
-        result = subprocess.run(command, capture_output=True, text=True, check=True)
-
-        # Output installation result
-        print("Waitress installation output:\n", result.stdout)
-        print("Waitress installation error (if any):\n", result.stderr)
-
-    except subprocess.CalledProcessError as e:
-        print("An error occurred while installing Waitress:", e)
-        raise
-
-
 def install_requirements():
     try:
         # Define the command to install requirements
@@ -57,6 +40,5 @@ def run_pyinstaller():
 
 
 if __name__ == "__main__":
-    install_waitress()
-    # install_requirements()
+    install_requirements()
     run_pyinstaller()

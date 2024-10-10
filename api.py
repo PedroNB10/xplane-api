@@ -2,6 +2,8 @@ import time
 from flask import Flask, jsonify
 import xpc
 import threading
+import pytz
+from datetime import datetime
 
 APP_PORT = 8080
 
@@ -22,9 +24,10 @@ drefs = [
 # Função para conectar ao X-Plane e tentar pegar os valores
 def connect_to_xplane():
     global client
-
+    # Enquanto o cliente não estiver conectado, tentar conectar
     while client is None:
         try:
+            # Abrindo conexão via UDP XplaneConnect
             client = xpc.XPlaneConnect()
             print("Connected to X-Plane, verifying data...")
 
@@ -49,6 +52,7 @@ def get_xplane_data():
                 "speed": values[3][0],
                 "altitude": values[4][0],
                 "heading": values[5][0],
+                "timestamp": datetime.now(pytz.UTC).replace(microsecond=0).isoformat(),
             }
         except:
             return {
