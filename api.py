@@ -49,8 +49,8 @@ def get_xplane_data():
                 "latitude": values[0][0],
                 "longitude": values[1][0],
                 "vertical_speed": values[2][0],
-                "speed": values[3][0],
-                "altitude": values[4][0],
+                "speed": values[3][0] * 1.94384,  # Convert m/s to knots,
+                "altitude": values[4][0] * 3.28084,  # Convert meters to feet
                 "heading": values[5][0],
                 "timestamp": datetime.now(pytz.UTC).replace(microsecond=0).isoformat(),
             }
