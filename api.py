@@ -5,7 +5,7 @@ import threading
 import pytz
 from datetime import datetime
 
-APP_PORT = 8080
+APP_PORT = 4915
 
 # Variável para armazenar o cliente do XPlaneConnect
 client = None
@@ -17,7 +17,7 @@ drefs = [
     "sim/cockpit2/gauges/indicators/vvi_fpm_pilot",  # Vertical Speed
     "sim/flightmodel/position/groundspeed",  # Speed
     "sim/flightmodel/position/elevation",  # Altitude
-    "sim/flightmodel2/position/mag_psi",  # Heading
+    "sim/flightmodel/position/mag_psi",  # Heading
 ]
 
 
